@@ -7,6 +7,14 @@ const taskContainer = document.querySelector(".taskContainer");
 // console.log(taskTextInput);
 let selectedColor = "red";
 let taskArray = [];
+const localStorageData = localStorage.getItem("taskArray");
+
+if(localStorageData){
+    const parsedData = JSON.parse(localStorageData);
+    // console.log(parsedData);
+    taskArray = parsedData;
+    createTicketAndAddTicketToUI(taskArray);
+}
 function hideTaskAdder(){
     taskAdderContainer.classList.toggle("hide");
 }
@@ -32,6 +40,7 @@ taskTextInput.addEventListener("keydown", function(event){
     }
     taskArray.push(taskObj);
     // console.log(taskArray);
+    updateTaskArrayInLocalStorage();
     createTicketAndAddTicketToUI(taskArray);
     
 });
@@ -81,3 +90,11 @@ function createTicketAndAddTicketToUI(ticketArray = taskArray){
         taskContainer.appendChild(ticketBox);
     });
 }
+
+function updateTaskArrayInLocalStorage( array = taskArray){
+    localStorage.setItem("taskArray" , JSON.stringify(array));
+}
+
+/* doubt
+1. local storage parse karte time waps se taskarray mein parse data ko kyu rakh rahe hai
+*/
