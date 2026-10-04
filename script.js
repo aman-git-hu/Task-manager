@@ -5,12 +5,32 @@ const taskAdderColorsContainer = document.querySelector(".priotityColors2");
 const taskAdderColors = document.querySelectorAll(".color2");
 const taskContainer = document.querySelector(".taskContainer");
 const deleteButton = document.querySelector("#delete");
+const filterColorContainer = document.querySelector(".priotityColors");
+const allTicketButton = document.getElementById("all");
 // console.log(taskTextInput);
 let selectedColor = "red";
 let isDeleteActive = false;
 let taskArray = [];
 let allColors = ["red", "blue", "green", "orange"];
 const localStorageData = localStorage.getItem("taskArray");
+
+// allTickets
+
+allTicketButton.addEventListener("click", function () {
+  createTicketAndAddTicketToUI();
+});
+// filtering logic  of tickets
+filterColorContainer.addEventListener("click", function(event){
+    const selectedElement = event.target;
+    if(selectedElement.classList[0] !== "color")return;
+    // console.log(selectedElement);
+    let color = selectedElement.classList[1];
+    // console.log(color);
+    let filteredArray = taskArray.filter(function(obj){
+        return obj.color == color;
+    });
+    createTicketAndAddTicketToUI(filteredArray);
+});
 
 deleteButton.addEventListener("click", function () {
   if (isDeleteActive) {
@@ -29,6 +49,7 @@ if (localStorageData) {
 
 function hideTaskAdder() {
   taskAdderContainer.classList.toggle("hide");
+  taskTextInput.focus();
 }
 addBtn.addEventListener("click", hideTaskAdder);
 
@@ -69,6 +90,7 @@ taskAdderColorsContainer.addEventListener("click", function (event) {
     element.classList.remove("border");
   });
   selectedElement.classList.add("border");
+  taskTextInput.focus();
   // console.log(newSelectedColor);
 });
 
