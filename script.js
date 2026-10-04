@@ -4,74 +4,82 @@ const taskTextInput = document.querySelector(".taskText");
 const taskAdderColorsContainer = document.querySelector(".priotityColors2");
 const taskAdderColors = document.querySelectorAll(".color2");
 const taskContainer = document.querySelector(".taskContainer");
+const deleteButton = document.querySelector("#delete");
 // console.log(taskTextInput);
 let selectedColor = "red";
+let isDeleteActive = false;
 let taskArray = [];
-let allColors = ["red","blue","green","orange"];
+let allColors = ["red", "blue", "green", "orange"];
 const localStorageData = localStorage.getItem("taskArray");
 
-if(localStorageData){
-    const parsedData = JSON.parse(localStorageData);
-    // console.log(parsedData);
-    taskArray = parsedData;
-    createTicketAndAddTicketToUI(taskArray);
+deleteButton.addEventListener("click", function () {
+  if (isDeleteActive) {
+    deleteButton.setAttribute("fill", "black");
+  } else {
+    deleteButton.setAttribute("fill", "red");
+  }
+  isDeleteActive = !isDeleteActive;
+});
+if (localStorageData) {
+  const parsedData = JSON.parse(localStorageData);
+  // console.log(parsedData);
+  taskArray = parsedData;
+  createTicketAndAddTicketToUI(taskArray);
 }
-function hideTaskAdder(){
-    taskAdderContainer.classList.toggle("hide");
+
+function hideTaskAdder() {
+  taskAdderContainer.classList.toggle("hide");
 }
-addBtn.addEventListener("click",hideTaskAdder);
+addBtn.addEventListener("click", hideTaskAdder);
 
 // key press hone par kya kya hoga
-taskTextInput.addEventListener("keydown", function(event){
-    if(event.key !== "Enter") return;
-    // console.dir(taskTextInput);
-    let taskText =taskTextInput.value.trim();
-    taskTextInput.value = "";
+taskTextInput.addEventListener("keydown", function (event) {
+  if (event.key !== "Enter") return;
+  // console.dir(taskTextInput);
+  let taskText = taskTextInput.value.trim();
+  taskTextInput.value = "";
 
-    // console.log(taskText);
-     
-    if(taskText.length == 0){
-        return;
-    }
-    hideTaskAdder();
-    const taskObj = {
-        id:Date.now(),
-        task:taskText,
-        color:selectedColor,
-    }
-    taskArray.push(taskObj);
-    // console.log(taskArray);
-    updateTaskArrayInLocalStorage();
-    createTicketAndAddTicketToUI(taskArray);
-    
+  // console.log(taskText);
+
+  if (taskText.length == 0) {
+    return;
+  }
+  hideTaskAdder();
+  const taskObj = {
+    id: Date.now(),
+    task: taskText,
+    color: selectedColor,
+  };
+  taskArray.push(taskObj);
+  // console.log(taskArray);
+  updateTaskArrayInLocalStorage();
+  createTicketAndAddTicketToUI(taskArray);
 });
-
 
 // ye colors ko select kar raha hai taskadder container ke side mein jo color hai
-taskAdderColorsContainer.addEventListener("click",function(event){
-    const selectedElement = event.target;
-    // console.dir(selectedElement);
-    // console.log("hihi");
-    if(selectedElement.classList[0] !== "color2") return;
-    const newSelectedColor = selectedElement.classList[1];
-    selectedColor = newSelectedColor;
+taskAdderColorsContainer.addEventListener("click", function (event) {
+  const selectedElement = event.target;
+  // console.dir(selectedElement);
+  // console.log("hihi");
+  if (selectedElement.classList[0] !== "color2") return;
+  const newSelectedColor = selectedElement.classList[1];
+  selectedColor = newSelectedColor;
 
-    taskAdderColors.forEach((element) =>{
-        element.classList.remove("border");
-    });
-    selectedElement.classList.add("border");
-    // console.log(newSelectedColor);
-    
+  taskAdderColors.forEach((element) => {
+    element.classList.remove("border");
+  });
+  selectedElement.classList.add("border");
+  // console.log(newSelectedColor);
 });
 
-function createTicketAndAddTicketToUI(ticketArray = taskArray){
-    taskContainer.innerHTML=" ";
-    ticketArray.forEach((taskObj) =>{
-        const{id,task,color} = taskObj;
+function createTicketAndAddTicketToUI(ticketArray = taskArray) {
+  taskContainer.innerHTML = " ";
+  ticketArray.forEach((taskObj) => {
+    const { id, task, color } = taskObj;
 
-        const ticketBox = document.createElement("div");
-        ticketBox.classList.add("ticket");
-        ticketBox.innerHTML=`<div class="taskColor ${color}"></div>
+    const ticketBox = document.createElement("div");
+    ticketBox.classList.add("ticket");
+    ticketBox.innerHTML = `<div class="taskColor ${color}"></div>
         <div class="ticketTaskContainer">
         <p id = "pTag" > ${task}</p>
           <div class="lockContainer">
@@ -89,26 +97,38 @@ function createTicketAndAddTicketToUI(ticketArray = taskArray){
           </div>
         </div>`;
 
-        const taskColorElement = ticketBox.querySelector(".taskColor");
-        taskColorElement.addEventListener("click", function(){
-            console.log("taskcolor container click");
-            let currentColor = taskColorElement.classList[1];
-            console.log(currentColor);
-            let currentColorIndex = allColors.indexOf(currentColor);
-            let nextColor = allColors[(currentColorIndex + 1) % allColors.length];
-            //ui update
-            taskColorElement.classList.remove(currentColor);
-            taskColorElement.classList.add(nextColor);
-            console.log(nextColor);
-            // data layer
-            taskObj.color = nextColor;
-        })
-        taskContainer.appendChild(ticketBox);
+    const taskColorElement = ticketBox.querySelector(".taskColor");
+    taskColorElement.addEventListener("click", function () {
+      console.log("taskcolor container click");
+      let currentColor = taskColorElement.classList[1];
+      console.log(currentColor);
+      let currentColorIndex = allColors.indexOf(currentColor);
+      let nextColor = allColors[(currentColorIndex + 1) % allColors.length];
+      //ui update
+      taskColorElement.classList.remove(currentColor);
+      taskColorElement.classList.add(nextColor);
+      console.log(nextColor);
+      // data layer
+      taskObj.color = nextColor;
     });
+    ticketBox.addEventListener("dblclick", function () {
+      if (!isDeleteActive) return;
+      // Ui Layer
+      taskContainer.removeChild(ticketBox);
+      // Data Layer
+      taskArray= taskArray.filter(function (obj) {
+        return obj.id != taskObj.id;
+      });
+   
+      //updating local storage
+      updateTaskArrayInLocalStorage(taskArray);
+    });
+    taskContainer.appendChild(ticketBox);
+  });
 }
 
-function updateTaskArrayInLocalStorage( array = taskArray){
-    localStorage.setItem("taskArray" , JSON.stringify(array));
+function updateTaskArrayInLocalStorage(array = taskArray) {
+  localStorage.setItem("taskArray", JSON.stringify(array));
 }
 
 /* doubt
