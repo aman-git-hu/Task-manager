@@ -5,21 +5,37 @@ const taskAdderColorsContainer = document.querySelector(".priotityColors2");
 const taskAdderColors = document.querySelectorAll(".color2");
 // console.log(taskTextInput);
 let selectedColor = "red";
-addBtn.addEventListener("click",function(){
+let taskArray = [];
+function hideTaskAdder(){
     taskAdderContainer.classList.toggle("hide");
-});
+}
+addBtn.addEventListener("click",hideTaskAdder);
 
 taskTextInput.addEventListener("keydown", function(event){
     if(event.key !== "Enter") return;
     // console.dir(taskTextInput);
     let taskText =taskTextInput.value.trim();
+    taskTextInput.value = "";
+
     // console.log(taskText);
      
     if(taskText.length == 0){
         return;
     }
+    hideTaskAdder();
+    const taskObj = {
+        id:Date.now(),
+        task:taskText,
+        color:selectedColor,
+    }
+    taskArray.push(taskObj);
+    console.log(taskArray);
+    createTicketAndAddTicketToUI(taskArray);
     
 });
+
+
+// ye colors ko select kar raha hai taskadder container ke side mein jo color hai
 taskAdderColorsContainer.addEventListener("click",function(event){
     const selectedElement = event.target;
     // console.dir(selectedElement);
@@ -35,3 +51,7 @@ taskAdderColorsContainer.addEventListener("click",function(event){
     // console.log(newSelectedColor);
     
 });
+
+function createTicketAndAddTicketToUI(array = taskArray){
+    
+}
