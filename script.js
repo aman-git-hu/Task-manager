@@ -7,6 +7,7 @@ const taskContainer = document.querySelector(".taskContainer");
 // console.log(taskTextInput);
 let selectedColor = "red";
 let taskArray = [];
+let allColors = ["red","blue","green","orange"];
 const localStorageData = localStorage.getItem("taskArray");
 
 if(localStorageData){
@@ -87,6 +88,21 @@ function createTicketAndAddTicketToUI(ticketArray = taskArray){
             </svg>
           </div>
         </div>`;
+
+        const taskColorElement = ticketBox.querySelector(".taskColor");
+        taskColorElement.addEventListener("click", function(){
+            console.log("taskcolor container click");
+            let currentColor = taskColorElement.classList[1];
+            console.log(currentColor);
+            let currentColorIndex = allColors.indexOf(currentColor);
+            let nextColor = allColors[(currentColorIndex + 1) % allColors.length];
+            //ui update
+            taskColorElement.classList.remove(currentColor);
+            taskColorElement.classList.add(nextColor);
+            console.log(nextColor);
+            // data layer
+            taskObj.color = nextColor;
+        })
         taskContainer.appendChild(ticketBox);
     });
 }
