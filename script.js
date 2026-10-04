@@ -2,6 +2,7 @@ const addBtn = document.querySelector("#add");
 const taskAdderContainer = document.querySelector(".taskAdder");
 const taskTextInput = document.querySelector(".taskText");
 const taskAdderColorsContainer = document.querySelector(".priotityColors2");
+const taskAdderColors = document.querySelectorAll(".color2");
 // console.log(taskTextInput);
 let selectedColor = "red";
 addBtn.addEventListener("click",function(){
@@ -27,6 +28,10 @@ taskAdderColorsContainer.addEventListener("click",function(event){
     const newSelectedColor = selectedElement.classList[1];
     selectedColor = newSelectedColor;
 
-    console.log(newSelectedColor);
+    taskAdderColors.forEach((element) =>{
+        element.classList.remove("border");
+    });
+    selectedElement.classList.add("border");
+    // console.log(newSelectedColor);
     
 });
